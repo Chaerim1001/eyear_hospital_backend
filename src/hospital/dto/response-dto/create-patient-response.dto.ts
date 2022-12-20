@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseResponse } from '../../../util/swagger/base-response.dto';
 
+// 환자 등록 요청에 대한 응답 데이터 클래스
 class CreatePatientResponseData {
   id: number;
   name: string;

@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseResponse } from '../../../util/swagger/base-response.dto';
 
+// 병동 생성 요청에 대한 응답 데이터 클래스
 class CreateWardResponseData {
   id: number;
   name: string;

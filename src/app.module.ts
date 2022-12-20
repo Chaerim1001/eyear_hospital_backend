@@ -16,12 +16,13 @@ import { ReservationModule } from './reservation/reservation.module';
 import { Reservation } from './reservation/entities/reservation.entity';
 import { Keyword } from './keywords/entities/keyworrd.entity';
 import { NameWord } from './keywords/entities/nameWord.entity';
-
+// 해당 어플리케이션 전체에 대한 모듈 관리
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
       useFactory() {
         return {
+          // 데이터베이스 연결 관련 코드
           type: 'mysql',
           host: process.env.MYSQLDB_HOST,
           port: parseInt(process.env.MYSQLDB_DOCKER_PORT, 10),

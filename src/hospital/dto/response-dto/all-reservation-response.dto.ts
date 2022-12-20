@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseResponse } from '../../../util/swagger/base-response.dto';
 
+// 면회 리스트 조회 요청에 대한 응답 데이터 클래스
 class ReservationData {
   @ApiProperty({ description: '면회 예약 아이디', example: 1 })
   reservation_id: number;

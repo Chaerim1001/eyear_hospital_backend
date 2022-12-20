@@ -27,6 +27,7 @@ import { DeletePatientDto } from './dto/request-dto/delete-patient.dto';
 @Injectable()
 export class HospitalService {
   constructor(
+    // 사용하고자하는 데이터베이스 테이블에 대한 의존성 주입 및 repository 생성
     @InjectRepository(Hospital)
     private hospitalRepository: Repository<Hospital>,
     @InjectRepository(Ward)
@@ -46,11 +47,14 @@ export class HospitalService {
   }
 
   async create(requestDto: CreateHospitalDto): Promise<any> {
+    // 병원 회원가입 처리 함수
+    // 요청 받은 hospitalId와 password를 사용해 회원가입을 진행한다.
     const isExist = await this.hospitalRepository.findOneBy({
       hospitalId: requestDto.hospitalId,
     });
 
     if (isExist) {
+      // 이미 동일한 아이디를 가진 병원이 있을 경우 에러를 발생시킨다.
       throw new ForbiddenException({
         statusCode: HttpStatus.FORBIDDEN,
         message: ['Already registered id'],
@@ -58,6 +62,7 @@ export class HospitalService {
       });
     }
 
+    // password는 암호화하여 저장한다.
     requestDto.password = await hash(
       requestDto.password,
       parseInt(process.env.HASH_NUMBER),
@@ -69,6 +74,7 @@ export class HospitalService {
   }
 
   async idCheck(requestDto: IdCheckDto) {
+    // hospitalId가 중복되는 아이디가 있는지 확인하는 함수
     const isExist = await this.hospitalRepository.findOneBy({
       hospitalId: requestDto.hospitalId,
     });
@@ -87,6 +93,7 @@ export class HospitalService {
   }
 
   async createWard(
+    // 병동 생성 함수
     requestDto: CreateWardDto,
     hospitalId: string,
   ): Promise<any> {
@@ -99,6 +106,7 @@ export class HospitalService {
       const isExist = await this.findWard(id, wardName);
 
       if (isExist.length != 0) {
+        // 병동 생성을 요청한 병원에 해당 병동이 이미 있는 경우 에러를 발생시킨다.
         throw new ForbiddenException({
           statusCode: HttpStatus.FORBIDDEN,
           message: ['Already registered ward'],
@@ -120,6 +128,7 @@ export class HospitalService {
   }
 
   async findHospital(hospitalId: string): Promise<Hospital> {
+    // 병원 아이디를 사용해 병원 정보를 조회하는 함수
     const hospital = await this.hospitalRepository.findOneBy({
       hospitalId,
     });
@@ -139,10 +148,12 @@ export class HospitalService {
     requestDto: CreateRoomDto,
     hospitalId: string,
   ): Promise<any> {
+    // 병실 생성 함수
     const hospital = await this.findHospital(hospitalId);
     const ward = await this.findWard(hospital.id, requestDto.wardName);
 
     if (ward.length < 1) {
+      // 요청 병동이 있는지부터 확인한다.
       throw new ForbiddenException({
         statusCode: HttpStatus.FORBIDDEN,
         message: ['Not Existed Ward'],
@@ -162,6 +173,7 @@ export class HospitalService {
       });
     }
 
+    // 요청 병동에 해당 병실을 생성한다.
     const { id, roomNumber } = await this.roomRepository.save({
       ward: ward[0],
       currentPatient: 0,
@@ -176,6 +188,7 @@ export class HospitalService {
   }
 
   async findWard(id: number, wardName: string): Promise<Ward[]> {
+    // 병동 이름을 사용하여 해당 병원에 병동이 있는지 조회한다.
     const ward = await this.wardRepository
       .createQueryBuilder('ward')
       .select()
@@ -195,6 +208,7 @@ export class HospitalService {
   }
 
   async findRoom(wardId: number, roomNumber: number): Promise<Room[]> {
+    // 병실 번호를 사용하여 병실이 존재하는지 확인하는 함수
     const room = await this.roomRepository
       .createQueryBuilder('room')
       .select()
@@ -214,6 +228,8 @@ export class HospitalService {
   }
 
   async createPatient(requestDto: CreatePatientDto, hospitalId: string) {
+    // 환자 등록 함수
+    // 환자 등록을 원하는 병동 및 병실 정보가 올바른지 확인 후 환자 등록을 진행한다.
     const hospital = await this.findHospital(hospitalId);
     const ward = await this.findWard(hospital.id, requestDto.wardName);
     if (ward.length < 1) {
@@ -276,6 +292,7 @@ export class HospitalService {
   }
 
   async getMainData(hospitalId: string) {
+    // 병원 메인 페이지에 표시할 데이터를 조회하는 함수
     const OFFSET = 1000 * 60 * 60 * 9;
     const day = new Date(new Date().getTime() + OFFSET);
     const today = day.toISOString().split('T')[0];
@@ -283,6 +300,7 @@ export class HospitalService {
     day.setDate(day.getDate() - 1);
     const yesterday = day.toISOString().split('T')[0];
 
+    // 오늘 도착한 영상 편지 조회
     const posts = await this.hospitalRepository
       .createQueryBuilder('hospital')
       .select('post.id')
@@ -311,6 +329,7 @@ export class HospitalService {
       }
     }
 
+    // 오늘 예약된 면회 리스트 조회
     const reservations = await this.reservationRepository
       .createQueryBuilder('reservation')
       .select('reservation.createdAt')
@@ -364,6 +383,7 @@ export class HospitalService {
     return { posts: posts, reservations: reservations };
   }
 
+  // 병원에 등록된 환자 정보를 조회하는 함수
   async getPatients(hospitalId: string) {
     const patients = await this.patientRepository
       .createQueryBuilder('patient')
@@ -399,6 +419,7 @@ export class HospitalService {
     return patients;
   }
 
+  // 병원에 등록된 병동 정보를 조회하는 함수
   async getWardList(hospitalId: string) {
     const wards = await this.wardRepository
       .createQueryBuilder('ward')
@@ -411,6 +432,7 @@ export class HospitalService {
     return wards;
   }
 
+  // 병원에 등록된 병실 정보를 조회하는 함수
   async getRoomList(hospitalId: string) {
     const wards = await this.getWardList(hospitalId);
     const result = [];
@@ -452,6 +474,7 @@ export class HospitalService {
     return result;
   }
 
+  // 병동 정보를 수정하는 함수
   async updateWard(requestDto: UpdateWardDto, hospitalId: string) {
     const hospital = await this.findHospital(hospitalId);
 
@@ -480,6 +503,7 @@ export class HospitalService {
     }
   }
 
+  // 병동을 삭제하는 함수
   async deleteWard(requestDto: DeleteWardDto, hospitalId: string) {
     const hospital = await this.findHospital(hospitalId);
 
@@ -504,6 +528,7 @@ export class HospitalService {
     }
   }
 
+  // 병실 정보를 수정하는 함수
   async updateRoom(hospitalId: string, requestDto: UpdateRoomDto) {
     const hospital = await this.findHospital(hospitalId);
 
@@ -538,6 +563,7 @@ export class HospitalService {
     }
   }
 
+  // 병실을 삭제하는 함수
   async deleteRoom(hospitalId: string, requestDto: DeleteRoomDto) {
     const hospital = await this.findHospital(hospitalId);
     const room = await this.roomRepository.findOne({
@@ -570,6 +596,7 @@ export class HospitalService {
     }
   }
 
+  // 환자 정보를 수정하는 함수
   async updatePatient(requestDto: UpdatePatientDto, hospitalId: string) {
     const hospital = await this.findHospital(hospitalId);
 
@@ -594,6 +621,7 @@ export class HospitalService {
     }
   }
 
+  // 환자를 삭제하는 함수
   async deletePatient(requestDto: DeletePatientDto, hospitalId: string) {
     const hospital = await this.findHospital(hospitalId);
 

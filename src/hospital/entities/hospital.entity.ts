@@ -8,38 +8,39 @@ import { Reservation } from '../../reservation/entities/reservation.entity';
 import { User } from '../../user/entities/user.entity';
 
 @Entity()
+// 병원 테이블
 export class Hospital extends Common {
   @Column({ type: 'varchar', length: 50 })
-  name: string;
+  name: string; // 병원 이름
 
   @Column({ type: 'varchar', length: 50, unique: true })
-  hospitalId: string;
+  hospitalId: string; // 병원이 로그인에 사용할 아이디
 
   @Column({ type: 'varchar' })
-  password: string;
+  password: string; // 병원이 로그인에 사용할 비밀번호
 
   @Column({ type: 'varchar', length: 50, unique: true })
-  phoneNumber: string;
+  phoneNumber: string; // 병원 전화번호
 
   @Column({ type: 'varchar' })
-  address: string;
+  address: string; // 병원 주소
 
   @Column({ nullable: true })
   @Exclude()
-  currentHashedRefreshToken?: string;
+  currentHashedRefreshToken?: string; // 병원의 refresh token을 저장하기 위한 컬럼
 
   @OneToMany(() => Ward, (ward) => ward.hospital)
-  wards: Ward[];
+  wards: Ward[]; // 병원과 연동된 병동 fk
 
   @OneToMany(() => Patient, (patient) => patient.hospital)
-  patients: Patient[];
+  patients: Patient[]; // 병원과 연동된 환자 fk
 
   @OneToMany(() => Post, (post) => post.hospital)
-  posts: Post[];
+  posts: Post[]; // 병원과 연동된 우편 fk
 
   @OneToMany(() => Reservation, (reservation) => reservation.hospital)
-  reservations: Reservation[];
+  reservations: Reservation[]; // 병원과 연동된 면회 예약 fk
 
   @OneToMany(() => User, (user) => user.hospital)
-  users: User[];
+  users: User[]; // 병원과 연동된 사용자 fk
 }

@@ -30,3 +30,4 @@ services:
 
 networks:
   backend:
+  # 아이어 어플리케이션과 mysql 데이터베이스를 연결하기 위한 파일

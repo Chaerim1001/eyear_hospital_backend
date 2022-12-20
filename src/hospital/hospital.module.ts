@@ -8,6 +8,7 @@ import { Room } from './entities/room.entity';
 import { Patient } from './entities/patient.entity';
 import { Reservation } from '../reservation/entities/reservation.entity';
 
+// hospital 관련 처리를 위한 module 관리
 @Module({
   imports: [
     TypeOrmModule.forFeature([Hospital, Ward, Room, Patient, Reservation]),

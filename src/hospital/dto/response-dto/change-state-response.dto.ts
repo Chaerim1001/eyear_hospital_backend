@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseResponse } from '../../../util/swagger/base-response.dto';
 
+// 면회 승인 여부 결정 요청에 대한 응답 데이터 클래스
 class ChangeStateResponseData {
   @ApiProperty({ description: '예약 아이디', example: 1 })
   reservationId: number;

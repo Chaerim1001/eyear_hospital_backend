@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseResponse } from '../../../util/swagger/base-response.dto';
-
+// 아이디 중복 체크 요청에 대한 응답 데이터 클래스
 class IdCheckResponseData {
   result: boolean;
   test: string;

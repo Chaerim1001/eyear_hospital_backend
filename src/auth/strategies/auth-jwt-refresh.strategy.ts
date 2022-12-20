@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
+// refresh token을 사용한 auth 전략
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
   Strategy,

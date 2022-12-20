@@ -2,3 +2,5 @@
 .git
 node_modules
 dist
+
+# docker로 컨테이너를 띄울 때 포함하지 않을 파일들

@@ -6,6 +6,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
  *
  * @param {INestApplication} app
  */
+// API 자동 문서화를 위한 swagger 설정
 export function setupSwagger(app: INestApplication): void {
   const options = new DocumentBuilder()
     .setTitle('Eyear Hospital API Docs')

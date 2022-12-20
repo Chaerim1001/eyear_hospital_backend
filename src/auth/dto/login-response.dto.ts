@@ -6,6 +6,7 @@ class TokensData {
   refresh_token: string;
 }
 
+// Login 후 응답 데이터 클래스
 class LoginResponseData {
   name: string;
 }
@@ -14,7 +15,7 @@ export abstract class LoginResponse extends BaseResponse {
   constructor() {
     super();
   }
-
+  // @ApiProperty: 서버 API 문서화를 위한 어노테이션
   @ApiProperty({
     description: 'tokens',
     example: {

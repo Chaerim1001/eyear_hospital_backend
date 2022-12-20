@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseResponse } from '../../../util/swagger/base-response.dto';
+// 병원 메인 홈페이지에 표시할 데이터 클래스 -->  오늘 도착한 영상 우편 리스트 + 오늘 예약된 면회 리스트
 class PostData {
   @ApiProperty({
     description: '영상 id',

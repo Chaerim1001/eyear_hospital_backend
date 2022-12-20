@@ -10,24 +10,13 @@ import { Post } from './entities/post.entity';
 export class PostService {
   constructor(
     @InjectRepository(Post)
-    private postRepository: Repository<Post>,
-
-    @InjectRepository(Hospital)
-    private hospitalRepository: Repository<Hospital>,
-
-    @InjectRepository(Patient)
-    private patientRepository: Repository<Patient>,
-
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private postRepository: Repository<Post>, // Post 테이블에 대한 의존성 주입 --> repository 정의
   ) {
     this.postRepository = postRepository;
-    this.hospitalRepository = hospitalRepository;
-    this.patientRepository = patientRepository;
-    this.userRepository = userRepository;
   }
 
   async getPostDetail(postId: number, hospitalId: string) {
+    // 영상 우편 상세 디테일에 대한 조회 함수
     const post = await this.postRepository
       .createQueryBuilder('post')
       .leftJoin('post.hospital', 'hospital')
@@ -36,6 +25,7 @@ export class PostService {
       .execute();
 
     if (post.length != 1) {
+      // 요청에 의해 조회한 영상이 한개가 아닐 경우 에러를 발생시킨다.
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: ['not existed post'],

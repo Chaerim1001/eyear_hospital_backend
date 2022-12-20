@@ -13,15 +13,16 @@ import { Reservation } from './entities/reservation.entity';
 @Injectable()
 export class ReservationService {
   constructor(
-    @InjectRepository(Reservation)
+    @InjectRepository(Reservation) // Reservation 테이블 사용을 위한 의존성 주입
     private reservationRepository: Repository<Reservation>,
-    @InjectRepository(Hospital)
+    @InjectRepository(Hospital) // Hospital 테이블 사용을 위한 의존성 주입
     private hospitalRepository: Repository<Hospital>,
   ) {
     this.reservationRepository = reservationRepository;
     this.hospitalRepository = hospitalRepository;
   }
 
+  // 날짜 데이터를 특정 포맷으로 변경해주는 함수
   formatDate(dateData: Date) {
     const temp = dateData.toISOString().split('T')[0];
     const temp2 = temp.split('-');
@@ -30,6 +31,7 @@ export class ReservationService {
   }
 
   async findHospital(hospitalId: string): Promise<Hospital> {
+    // hospitalId를 통해 병원 정보를 찾는 함수
     const hospital = await this.hospitalRepository.findOneBy({
       hospitalId,
     });
@@ -38,6 +40,7 @@ export class ReservationService {
       return hospital;
     }
 
+    // 등록된 병원이 없을 경우 에러를 발생시킨다.
     throw new ForbiddenException({
       statusCode: HttpStatus.FORBIDDEN,
       message: ['Not Existed Hospital'],
@@ -46,6 +49,7 @@ export class ReservationService {
   }
 
   async getAllReservation(hospitalId: string) {
+    // 병원에 신청된 모든 면회 예약 정보를 조회하는 함수
     const hospital = await this.findHospital(hospitalId);
 
     const reservations = await this.reservationRepository
@@ -88,6 +92,7 @@ export class ReservationService {
   }
 
   async getReservationList(hospitalId: string, date: Date) {
+    // 특정 날짜에 예약된 면회 정보를 찾는 함수
     const hospital = await this.findHospital(hospitalId);
 
     const reservations = await this.reservationRepository
@@ -122,6 +127,7 @@ export class ReservationService {
   }
 
   async changeReservationState(hospitalId: string, requestDto: ChangeStateDto) {
+    // 면회의 승인 여부를 결정하는 함수
     const reservation = await this.reservationRepository.findOne({
       where: {
         id: requestDto.reservationId,
@@ -130,6 +136,7 @@ export class ReservationService {
     });
 
     if (!reservation) {
+      // 승인 여부를 결정하고자 하는 면회가 없을 경우 에러를 발생시킨다.
       throw new BadRequestException({
         statusCode: HttpStatus.BAD_REQUEST,
         message: ['존재하지 않는 예약입니다.'],
@@ -138,6 +145,7 @@ export class ReservationService {
     }
 
     if (reservation.approveCheck != 0) {
+      // 승인 여부를 이미 결정한 경우 에러를 발생시킨다
       throw new BadRequestException({
         statusCode: HttpStatus.BAD_REQUEST,
         message: ['이미 승인 여부가 결정된 예약입니다.'],

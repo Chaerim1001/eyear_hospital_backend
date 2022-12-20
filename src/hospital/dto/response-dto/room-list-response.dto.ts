@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseResponse } from '../../../util/swagger/base-response.dto';
 
+// 병원에 등록된 병실 리스트 조회 요청에 대한 응답 데이터 클래스
 class RoomResponseData {
   @ApiProperty({ description: '병동 아이디', example: 1 })
   ward_id: number;

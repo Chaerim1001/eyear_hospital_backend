@@ -46,12 +46,12 @@ import { UpdatePatientDto } from './dto/request-dto/update-patient.dto';
 import { UpdatePatientResponse } from './dto/response-dto/update-patient-response.dto';
 import { DeletePatientDto } from './dto/request-dto/delete-patient.dto';
 
-@Controller('hospital')
+@Controller('hospital') // 'hospital' url로 들어오는 모든 요청을 담당하는 controller
 @ApiTags('Hospital API')
 export class HospitalController {
   constructor(private readonly hospitalService: HospitalService) {}
 
-  @Post('')
+  @Post('') // 'hospital'로 들어오는 Post 요청에 대한 처리를 담당한다.
   @ApiOperation({
     summary: '병원 생성',
     description: '병원 계정을 생성한다.',
@@ -62,6 +62,7 @@ export class HospitalController {
     type: CreateHospitalResponse,
   })
   async create(@Body() requestDto: CreateHospitalDto, @Res() res: Response) {
+    // 병원 계정 회원가입에 대한 처리
     const hospital = await this.hospitalService.create(requestDto);
     const result = {
       message: 'success',
@@ -70,7 +71,7 @@ export class HospitalController {
     return res.status(HttpStatus.CREATED).json(result);
   }
 
-  @Get('idCheck')
+  @Get('idCheck') // 'hospital/idCheck'로 들어오는 Get 요청에 대한 처리를 담당한다.
   @ApiOperation({
     summary: '병원 ID 중복 체크',
     description: '병원 ID 중복 체크',
@@ -80,6 +81,7 @@ export class HospitalController {
     type: IdCheckResponse,
   })
   async idCheck(@Query() requestDto: IdCheckDto, @Res() res: Response) {
+    // 병원 아이디 중복 체크 처리
     const idCheck = await this.hospitalService.idCheck(requestDto);
     const result = {
       message: 'success',
@@ -88,7 +90,7 @@ export class HospitalController {
     return res.status(HttpStatus.OK).json(result);
   }
 
-  @Post('ward')
+  @Post('ward') // 'hospital/ward'로 들어오는 Post 요청에 대한 처리를 담당한다.
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '병동 등록',
@@ -104,6 +106,7 @@ export class HospitalController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
+    // 병동 생성 처리
     const ward = await this.hospitalService.createWard(
       requestDto,
       req.user.hospitalId,
@@ -115,7 +118,7 @@ export class HospitalController {
     return res.status(HttpStatus.CREATED).json(result);
   }
 
-  @Put('ward')
+  @Put('ward') // 'hospital/ward'로 들어오는 Put 요청에 대한 처리를 담당한다.
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '병동 수정',
@@ -131,6 +134,7 @@ export class HospitalController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
+    // 병동 정보 수정 처리
     const ward = await this.hospitalService.updateWard(
       requestDto,
       req.user.hospitalId,
@@ -142,7 +146,7 @@ export class HospitalController {
     return res.status(HttpStatus.OK).json(result);
   }
 
-  @Delete('ward')
+  @Delete('ward') // 'hospital/ward'로 들어오는 Delete 요청에 대한 처리를 담당한다.
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '병동 삭제',
@@ -154,6 +158,7 @@ export class HospitalController {
     type: BaseResponse,
   })
   async deleteWard(
+    // 병동 정보 삭제 처리
     @Body() requestDto: DeleteWardDto,
     @Req() req: Request,
     @Res() res: Response,
@@ -166,7 +171,7 @@ export class HospitalController {
     return res.status(HttpStatus.OK).json({ message: result });
   }
 
-  @Post('room')
+  @Post('room') // 'hospital/room'로 들어오는 Post 요청에 대한 처리를 담당한다.
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '병실 등록',
@@ -182,6 +187,7 @@ export class HospitalController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
+    // 병실 생성 처리
     const room = await this.hospitalService.createRoom(
       requestDto,
       req.user.hospitalId,
@@ -193,7 +199,7 @@ export class HospitalController {
     return res.status(HttpStatus.CREATED).json(result);
   }
 
-  @Post('patient')
+  @Post('patient') // 'hospital/patient'로 들어오는 Post 요청에 대한 처리를 담당한다.
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '환자 등록',
@@ -209,6 +215,7 @@ export class HospitalController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
+    // 환자 등록 처리
     const patient = await this.hospitalService.createPatient(
       requestDto,
       req.user.hospitalId,
@@ -220,7 +227,7 @@ export class HospitalController {
     return res.status(HttpStatus.CREATED).json(result);
   }
 
-  @Get('main')
+  @Get('main') // 'hospital/main'로 들어오는 Get 요청에 대한 처리를 담당한다.
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '병원 메인 페이지',
@@ -231,6 +238,7 @@ export class HospitalController {
     type: HospitalMainResponse,
   })
   async getMainData(@Req() req: Request, @Res() res: Response) {
+    // 병원 메인 페이지에 표시할 데이터 조회 처리 -> 오늘 도착한 영상 우편 리스트 및 면회 예약 리스트
     const { posts, reservations } = await this.hospitalService.getMainData(
       req.user.hospitalId,
     );
@@ -242,7 +250,7 @@ export class HospitalController {
     return res.status(HttpStatus.OK).json(result);
   }
 
-  @Get('patient')
+  @Get('patient') // 'hospital/patient'로 들어오는 Get 요청에 대한 처리를 담당한다.
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '병원 환우 관리 페이지',
@@ -253,6 +261,7 @@ export class HospitalController {
     type: PatientListResponse,
   })
   async getPatients(@Req() req: Request, @Res() res: Response) {
+    // 병원에 등록되어 있는 환자 정보 조회 처리
     const patients = await this.hospitalService.getPatients(
       req.user.hospitalId,
     );
@@ -263,7 +272,7 @@ export class HospitalController {
     return res.status(HttpStatus.OK).json(result);
   }
 
-  @Get('wardList')
+  @Get('wardList') // 'hospital/wardList'로 들어오는 Get 요청에 대한 처리를 담당한다.
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '병동 리스트 API',
@@ -274,6 +283,7 @@ export class HospitalController {
     type: WardListResponse,
   })
   async getWardList(@Req() req: Request, @Res() res: Response) {
+    // 병원에 등록되어 있는 병동 리스트 조회
     const wards = await this.hospitalService.getWardList(req.user.hospitalId);
     const result = {
       message: 'success',
@@ -282,7 +292,7 @@ export class HospitalController {
     return res.status(HttpStatus.OK).json(result);
   }
 
-  @Get('roomList')
+  @Get('roomList') // 'hospital/roomList'로 들어오는 Get 요청에 대한 처리를 담당한다.
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '병실 리스트 API',
@@ -293,6 +303,7 @@ export class HospitalController {
     type: RoomListResponse,
   })
   async getRoomList(@Req() req: Request, @Res() res: Response) {
+    // 병원에 등록되어 있는 병실 리스트 조회
     const rooms = await this.hospitalService.getRoomList(req.user.hospitalId);
     const result = {
       message: 'success',
@@ -301,7 +312,7 @@ export class HospitalController {
     return res.status(HttpStatus.OK).json(result);
   }
 
-  @Put('room')
+  @Put('room') // 'hospital/room'로 들어오는 Put 요청에 대한 처리를 담당한다.
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '병실 수정 API',
@@ -316,6 +327,7 @@ export class HospitalController {
     @Res() res: Response,
     @Body() requestDto: UpdateRoomDto,
   ) {
+    // 병실 정보 수정 처리
     const room = await this.hospitalService.updateRoom(
       req.user.hospitalId,
       requestDto,
@@ -327,7 +339,7 @@ export class HospitalController {
     return res.status(HttpStatus.OK).json(result);
   }
 
-  @Put('patient')
+  @Put('patient') // 'hospital/patient'로 들어오는 Put 요청에 대한 처리를 담당한다.
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '환자 수정',
@@ -343,6 +355,7 @@ export class HospitalController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
+    // 환자 정보 수정 처리
     const patient = await this.hospitalService.updatePatient(
       requestDto,
       req.user.hospitalId,
@@ -354,7 +367,7 @@ export class HospitalController {
     return res.status(HttpStatus.OK).json(result);
   }
 
-  @Delete('room')
+  @Delete('room') // 'hospital/room'로 들어오는 Delete 요청에 대한 처리를 담당한다.
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '병실 삭제 API',
@@ -369,6 +382,7 @@ export class HospitalController {
     @Res() res: Response,
     @Body() requestDto: DeleteRoomDto,
   ) {
+    // 병실 삭제 처리
     const deleteResult = await this.hospitalService.deleteRoom(
       req.user.hospitalId,
       requestDto,
@@ -377,7 +391,7 @@ export class HospitalController {
     return res.status(HttpStatus.OK).json({ message: deleteResult });
   }
 
-  @Delete('patient')
+  @Delete('patient') // 'hospital/patient'로 들어오는 Delete 요청에 대한 처리를 담당한다.
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '환자 삭제',
@@ -393,6 +407,7 @@ export class HospitalController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
+    // 환자 삭제 처리
     const result = await this.hospitalService.deletePatient(
       requestDto,
       req.user.hospitalId,

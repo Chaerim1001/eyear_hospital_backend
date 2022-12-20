@@ -7,3 +7,5 @@ COPY . /app/
 EXPOSE 3000
 
 CMD ["npm", "run", "start:dev"]
+
+# 아이어 어플리케이션을 도커 컨테이너로 만들기 위한 파일

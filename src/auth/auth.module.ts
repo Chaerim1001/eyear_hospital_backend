@@ -9,7 +9,7 @@ import { Hospital } from 'src/hospital/entities/hospital.entity';
 import { LocalStrategy } from './strategies/auth-local.strategy';
 import { JwtRefreshStrategy } from './strategies/auth-jwt-refresh.strategy';
 import { JwtStrategy } from './strategies/auth-jwt.strategy';
-
+// Auth에서 사용하는 module, provider, controller에 대한 연결
 @Module({
   imports: [
     HospitalModule,

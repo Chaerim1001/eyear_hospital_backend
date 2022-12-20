@@ -24,7 +24,7 @@ import { ReservationService } from './reservation.service';
 export class ReservationController {
   constructor(private readonly reservationService: ReservationService) {}
 
-  @Get('hospital/allReservation')
+  @Get('hospital/allReservation') // 'hospital/allReservation' 으로 들어온 Get 요청에 대한 처리를 담당한다.
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '면회 리스트 확인 API',
@@ -35,6 +35,7 @@ export class ReservationController {
     type: AllReservationResponse,
   })
   async getAllReservation(@Req() req: Request, @Res() res: Response) {
+    // 전체 면회 리스트 조회에 대한 처리
     const reservations = await this.reservationService.getAllReservation(
       req.user.hospitalId,
     );
@@ -45,7 +46,7 @@ export class ReservationController {
     return res.status(HttpStatus.OK).json(result);
   }
 
-  @Get('hospital/reservationList')
+  @Get('hospital/reservationList') // 'hospital/reservationList' 으로 들어온 Get 요청에 대한 처리를 담당한다.
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '면회 리스트 확인 API',
@@ -56,6 +57,7 @@ export class ReservationController {
     type: ReservationListResponse,
   })
   async getReservationList(
+    // 원하는 날짜의 면회 예약 리스트를 조회 철리
     @Query() query: ReservationQueryDto,
     @Req() req: Request,
     @Res() res: Response,
@@ -71,7 +73,7 @@ export class ReservationController {
     return res.status(HttpStatus.OK).json(result);
   }
 
-  @Put('hospital/changeReservationState')
+  @Put('hospital/changeReservationState') //'hospital/changeReservationState' 에 대한 Put 요청에 대한 처리를 담당한다.
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '예약 승인 여부 결정 API',
@@ -86,6 +88,7 @@ export class ReservationController {
     @Res() res: Response,
     @Body() requestDto: ChangeStateDto,
   ) {
+    // 병원에서 개인이 신청한 면회 예약에 대해 승인 또는 거절 처리를 수행하는 함수
     const reservation = await this.reservationService.changeReservationState(
       req.user.hospitalId,
       requestDto,
